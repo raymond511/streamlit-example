@@ -150,14 +150,13 @@ def download_button(pdf_file_path):
             label="click me to download pdf",
             data=file,
             file_name=pdf_file_path,
-            mime="application/octet-stream")
-        
+            mime="application/octet-stream"
 st.title("AWB Sorter")
 uploaded_files = st.file_uploader("Upload PDF files", type="pdf", accept_multiple_files=True)
+shop = st.selectbox("Choose which platform to sort for", ['lazada', 'shopee'])
 
 if uploaded_files:
     st.write(f"{len(uploaded_files)} file(s) uploaded:")
-    shop = st.selectbox("Choose which platform to sort for", ['lazada', 'shopee'])
     for uploaded_file in uploaded_files:
         st.write(uploaded_file.name)
 
