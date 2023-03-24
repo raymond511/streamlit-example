@@ -144,10 +144,10 @@ def delete_uploaded_files(pdf_files):
         shutil.move(pdf, f'{cur_date}/file_made_from/{pdf}')
     shutil.rmtree('temp')
 
-def download_button(pdf_file_path):
+def download_button(txt, pdf_file_path):
     with open(pdf_file_path, "rb") as file:
         btn=st.download_button(
-            label="click me to download pdf",
+            label=txt,
             data=file,
             file_name=pdf_file_path,
             mime="application/octet-stream"
@@ -173,6 +173,6 @@ if uploaded_files:
     single_path = save_writer_as_pdf(single_order_path, shop = shop, file_description = 'single_orders_sorted')
     mixed_path = save_writer_as_pdf(mixed_order_path, shop = shop, file_description = 'mixed_orders_sorted')
     delete_uploaded_files(pdf_files)
-    st.download_button("Download Single Orders", single_path)
-    st.download_button("Download Mixed Orders", mixed_path)
+    download_button("Download Single Orders", single_path)
+    download_button("Download Mixed Orders", mixed_path)
 
