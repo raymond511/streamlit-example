@@ -150,7 +150,8 @@ def download_button(pdf_file_path):
             label="click me to download pdf",
             data=file,
             file_name=pdf_file_path,
-            mime="application/octet-stream"
+            mime="application/octet-stream")
+        
 st.title("AWB Sorter")
 uploaded_files = st.file_uploader("Upload PDF files", type="pdf", accept_multiple_files=True)
 
