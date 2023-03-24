@@ -151,6 +151,8 @@ def download_button(pdf_file_path):
             data=file,
             file_name=pdf_file_path,
             mime="application/octet-stream"
+        )
+
 st.title("AWB Sorter")
 uploaded_files = st.file_uploader("Upload PDF files", type="pdf", accept_multiple_files=True)
 shop = st.selectbox("Choose which platform to sort for", ['lazada', 'shopee'])
