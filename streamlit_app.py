@@ -56,6 +56,56 @@ def extract_from_merged_pdf(file, shop):
                     pdf_writer.write(out)
         return pdf_dict
     elif shop == 'lazada':
+        with open(path, 'rb') as file:
+            temp_pdf = PyPDF2.PdfReader(file)
+            pdf_dict = {}
+
+            # Iterate over all pages in the pdf
+            for page in range(len(temp_pdf.pages)):
+                pdf_dict[page] = {}
+
+                # Split airway bill into single page
+                pdf_writer = PyPDF2.PdfWriter()
+                cur_page = temp_pdf.pages[page]
+                pdf_writer.add_page(cur_page)
+                output_filename = f'temp/lazada_airwayBill_temp_page_{page+1}.pdf'
+                pdf_dict[page]['path'] = output_filename
+
+                # Extract text from each pdf
+                cur_text = cur_page.extract_text()
+                pdf_dict[page]['text'] = cur_text
+
+                # Parse iten name
+                #print(cur_text)
+                ninja_van_id = re.search(r"TN:\s*(\w+)", cur_text, re.MULTILINE).groups()[0]
+                final_quantity = re.search(r"No\.\s*of\s*Item\(s\)\:\s*(\d+)", cur_text, re.MULTILINE).groups()[0]
+                cur_text = cur_text.split('Item Description Qty')[1]
+                cur_text = cur_text.split(f'{ninja_van_id}')[0]
+                regex_match = re.search(r"([B|S]\d{5}(?:-[\w\d]+)?)(.+?)(\d+)$", cur_text, re.MULTILINE)
+                time.sleep(0.1)
+                if regex_match is None:
+                    print(cur_text)
+                    print(page)
+                    print()
+                    regex_match = re.search(r"([B|S]\d{3,4}(?:-[\w\d]+)?)(.+?)(\d+)$", cur_text, re.MULTILINE)
+                    if regex_match is None:
+                        regex_match = re.search(r"(\d+\-\d+\-\d+)(.+?)(\d+)", cur_text, re.MULTILINE)
+                        print(cur_text)
+                        print(page)
+                        print()
+                    pdf_dict[page]['sku'] = regex_match.groups()[0]
+                    pdf_dict[page]['quantity'] = regex_match.groups()[2]
+                else:
+                    pdf_dict[page]['sku'] = regex_match.groups()[0]
+                    pdf_dict[page]['quantity'] = regex_match.groups()[2]
+                item_name = regex_match.groups()[1]
+                pdf_dict[page]['final_quantity'] = final_quantity
+                pdf_dict[page]['item_name'] = item_name
+
+                # Save each page as pdf
+                os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+                with open(output_filename, 'wb') as out:
+                    pdf_writer.write(out)
         return pdf_dict
 
 
